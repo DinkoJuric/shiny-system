@@ -1,31 +1,44 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../store';
-import { AdaptiveEngine } from '../engine/AdaptiveEngine';
+import { AdaptiveEngine, type ProblemResult } from '../engine/AdaptiveEngine';
 import { ExperienceEngine } from '../engine/ExperienceEngine';
 import { Flame, Info } from 'lucide-react';
-
 import SessionSummary from './SessionSummary';
 import { VisualHintRenderer } from './VisualHintRenderer';
 import { logger } from '../utils/logger';
+import { TutorEngine } from '../engine/TutorEngine';
+import type { TutorGuide } from '../engine/TutorEngine';
+import { BreakdownModal } from './widgets/BreakdownModal';
 
 const GameScreen = () => {
-    const { userProfile, updateXP, updateSkillProficiency, setUserProfile } = useStore();
+    const { userProfile, updateProfile } = useStore();
     const [engine] = useState(() => new AdaptiveEngine(userProfile));
     const [currentProblem, setCurrentProblem] = useState<any>(null);
     const [userAnswer, setUserAnswer] = useState('');
-    const [feedback, setFeedback] = useState<any>(null);
+    const [feedback, setFeedback] = useState<ProblemResult | null>(null);
     const [stats, setStats] = useState({ streak: 0, score: 0 });
-    const [startTime, setStartTime] = useState(0);
-    const [xpGained, setXpGained] = useState(0);
-    const [showHint, setShowHint] = useState(false);
-    const [questionsAnswered, setQuestionsAnswered] = useState(0);
+    const [startTime, setStartTime] = useState(Date.now());
     const [showSummary, setShowSummary] = useState(false);
-    const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
+    const [showHint, setShowHint] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const [xpGained, setXpGained] = useState(0);
 
+    // Tutor Engine Extensions
+    const [tutorGuide, setTutorGuide] = useState<TutorGuide | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Initial Load
     useEffect(() => {
         loadNextProblem();
     }, []);
+
+    // Session Limit Check (e.g., 10 questions)
+    const questionsAnswered = engine.getSessionSummary().totalProblems;
+    useEffect(() => {
+        if (questionsAnswered > 0 && questionsAnswered % 10 === 0 && !feedback) {
+            setShowSummary(true);
+        }
+    }, [questionsAnswered, feedback]);
 
     const loadNextProblem = () => {
         const problem = engine.getNextProblem();
@@ -33,78 +46,45 @@ const GameScreen = () => {
         setUserAnswer('');
         setFeedback(null);
         setShowHint(false);
-        setXpGained(0);
+        setTutorGuide(null); // Reset tutor guide
         setStartTime(Date.now());
-        // Log first occurrence of each problem type
-        logger.once(`problem-${problem.type}`, 'info', `First ${problem.type} problem generated`);
         setTimeout(() => inputRef.current?.focus(), 50);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!currentProblem || !userAnswer) return;
+        if (!currentProblem || feedback) return;
 
         const timeTaken = (Date.now() - startTime) / 1000;
         const result = engine.processResult(currentProblem, userAnswer, timeTaken);
 
-        const xp = ExperienceEngine.calculateXP(result.isCorrect, timeTaken, 1, stats.streak);
-
-        if (result.isCorrect) {
-            setXpGained(xp);
-            updateXP(xp);
-        }
-
-        if (result.proficiencyDelta && result.skillKey) {
-            updateSkillProficiency(result.skillKey, result.proficiencyDelta);
-        }
-
         setFeedback(result);
-        setStats((prev) => ({
+        setStats(prev => ({
             streak: result.streak,
-            score: result.isCorrect ? prev.score + 10 : prev.score,
+            score: prev.score + (result.isCorrect ? 10 : 0) // Simple score
         }));
-        setQuestionsAnswered(prev => prev + 1);
+
+        // XP Calculation & Level Up
+        const xp = ExperienceEngine.calculateXP(result.isCorrect, timeTaken, userProfile.level || 1, result.streak);
+        if (xp > 0) {
+            setXpGained(xp);
+            updateProfile({ xp: (userProfile.xp || 0) + xp });
+            setTimeout(() => setXpGained(0), 1000);
+        }
+
+        logger.info('Problem Answered', { problemId: currentProblem.id, isCorrect: result.isCorrect });
 
         if (result.isCorrect) {
-            const newConsecutive = consecutiveCorrect + 1;
-            setConsecutiveCorrect(newConsecutive);
-
-            // Auto-Pilot: If enabled and 3 consecutive correct answers < 2s, bump level
-            if (userProfile.autoPilotEnabled && newConsecutive >= 3 && timeTaken < 2) {
-                const currentLevel = userProfile.level;
-                if (currentLevel < 10) {
-                    setUserProfile(prev => ({ ...prev, level: currentLevel + 1 }));
-                    // Show brief notification
-                    console.log('🚀 Auto-Pilot: Level increased to', currentLevel + 1);
-                }
-                setConsecutiveCorrect(0); // Reset after boost
-            }
-
-            // Check if session complete (e.g., every 10 questions)
-            if ((questionsAnswered + 1) % 10 === 0) {
-                setTimeout(() => setShowSummary(true), 1000);
-            } else {
-                setTimeout(loadNextProblem, 1000);
-            }
+            setTimeout(loadNextProblem, 1000); // Auto-advance if correct
         } else {
-            setConsecutiveCorrect(0); // Reset on incorrect
+            // Tutor Logic: Generate guide on error
+            const guide = TutorEngine.generateGuide(currentProblem, userAnswer);
+            setTutorGuide(guide);
         }
     };
 
     const handleContinue = () => {
-        // Save session record before continuing
-        const summary = engine.getSessionSummary();
-        const { addSessionRecord } = useStore.getState();
-
-        addSessionRecord({
-            problemsSolved: summary.totalProblems,
-            accuracy: summary.accuracy,
-            avgSpeed: summary.avgSpeed,
-            xpEarned: stats.score, // Use score as proxy for XP (10 per correct)
-        });
-
         setShowSummary(false);
-        setQuestionsAnswered(0); // Reset for next session
         setStats({ streak: 0, score: 0 }); // Reset stats
         loadNextProblem();
     };
@@ -126,10 +106,13 @@ const GameScreen = () => {
 
     const levelInfo = ExperienceEngine.getLevelProgress(userProfile.xp || 0);
 
-
-
     return (
         <div className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-2xl mx-auto animate-in relative -mt-16 overflow-visible">
+            <BreakdownModal
+                guide={tutorGuide}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
             {/* Active Plan Banner */}
             {userProfile.activePlan && (
                 <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-primary-500/20 border border-primary-500/30 px-4 py-1 rounded-full flex items-center space-x-2 whitespace-nowrap">
@@ -251,6 +234,15 @@ const GameScreen = () => {
                                         Answer: {feedback.correctAnswer}{' '}
                                         <span className="text-xs opacity-50">(Press Enter)</span>
                                     </span>
+                                    {tutorGuide && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsModalOpen(true)}
+                                            className="mt-3 text-sm text-indigo-400 hover:text-indigo-300 underline underline-offset-4 font-medium transition-colors"
+                                        >
+                                            Wait, explain why?
+                                        </button>
+                                    )}
                                 </>
                             )}
                         </div>
@@ -265,7 +257,7 @@ const GameScreen = () => {
                                 setUserAnswer('SKIP');
                                 handleSubmit(new Event('submit') as any);
                             }}
-                            className="flex-1 px4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+                            className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
                         >
                             <span>Skip</span>
                         </button>

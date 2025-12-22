@@ -4,6 +4,7 @@ import { MENTAL_MATH_MANUAL, getAdvancedHint } from './MentalMathHints';
 import type { Hint } from './MentalMathHints';
 import { convertToWordProblem } from './WordProblemGenerator';
 import { logger } from '../utils/logger';
+import { Persona } from './Persona';
 
 interface MicroSkillConfig {
     type: string;
@@ -22,8 +23,6 @@ export interface VisualHintStep {
     operation?: string;
     highlight?: boolean;
 }
-
-
 
 export interface ProblemResult {
     isCorrect: boolean;
@@ -229,8 +228,6 @@ export class AdaptiveEngine {
     }
 
     private getEligibleSkills(level: number): string[] {
-        // Return skills appropriate for this level
-        // Lower levels unlock basic skills, higher levels unlock all
         const allSkills = Object.keys(MICRO_SKILLS);
 
         if (level === 1) return ['add_basic_10', 'sub_basic_10'];
@@ -274,21 +271,24 @@ export class AdaptiveEngine {
             isCorrect,
             streak: this.currentStreak,
             correctAnswer: problem.answer,
-            feedback: this.generateFeedback(isCorrect, timeTaken),
+            feedback: this.generateFeedback(isCorrect, timeTaken, problem.answer, userAnswer),
             strategyHint: !isCorrect ? this.getStrategyHint(problem) : undefined,
             proficiencyDelta: isCorrect ? (timeTaken < 5 ? 5 : 2) : -5,
             skillKey: (problem as any).skillKey
         };
     }
 
-    private generateFeedback(isCorrect: boolean, timeTaken: number): string {
-        if (isCorrect) {
-            if (timeTaken < 2) return 'Lightning Fast! ⚡';
-            if (timeTaken < 5) return 'Great Speed!';
-            return 'Correct!';
-        } else {
-            return 'Keep going! You can do this.';
+    private generateFeedback(isCorrect: boolean, timeTaken: number, correctAnswer?: number | string, userAnswer?: string): string {
+        let isClose = false;
+        if (!isCorrect && typeof correctAnswer === 'number' && userAnswer) {
+            const val = parseFloat(userAnswer);
+            if (!isNaN(val)) {
+                // Consider it close if off by 1-2 or 10%
+                const diff = Math.abs(val - (correctAnswer as number));
+                isClose = diff <= 2 || diff / (correctAnswer as number) < 0.1;
+            }
         }
+        return Persona.getFeedback(isCorrect, timeTaken, isClose);
     }
 
     getStrategyHint(problem: Problem): Hint {
@@ -298,16 +298,6 @@ export class AdaptiveEngine {
 
         // Log only first hint generation per type
         logger.once(`hint-${type}`, 'info', `First ${type} hint generated`);
-
-        // Try to get an advanced hint first
-        let advancedType: string = type;
-        if (type === 'percentage_basic') advancedType = 'percentages';
-        if (type === 'powers_basic') advancedType = 'powers';
-
-        const advancedHint = getAdvancedHint(advancedType, problem);
-        if (advancedHint) {
-            return advancedHint;
-        }
 
         switch (type) {
             case 'addition':
@@ -341,6 +331,11 @@ export class AdaptiveEngine {
                         }
                     };
                 }
+
+                // Fallback to advanced hint if available
+                const advancedAdd = getAdvancedHint('addition', problem);
+                if (advancedAdd) return advancedAdd;
+
                 // Default: Break it down
                 const tens1 = Math.floor(n1 / 10) * 10;
                 const ones1 = n1 % 10;
@@ -415,6 +410,11 @@ Total: ${nextTen - n2} + ${n1 - nextTen}`,
                         }
                     };
                 }
+
+                // Fallback to advanced hint
+                const advancedSub = getAdvancedHint('subtraction', problem);
+                if (advancedSub) return advancedSub;
+
                 // Default Think Addition with visual
                 return {
                     text: `💡 **Think Addition**: ${n2} + ? = ${n1}. Count up from ${n2}.`,
@@ -573,6 +573,10 @@ ${digit1} | ${middle} | ${digit2}${middle >= 10 ? ` (carry ${carry})` : ''}`,
                         }
                     }
                 }
+
+                // Fallback to advanced hint
+                const advancedMult = getAdvancedHint('multiplication', problem);
+                if (advancedMult) return advancedMult;
 
                 // Default Visual Breakdown
                 const tens = Math.floor(n1 / 10) * 10;
@@ -801,27 +805,12 @@ ${tenPct} × 2 = ${result}`,
                         }
                     };
                 }
-                if (p === 15) {
-                    const tenPct = num2Val / 10;
-                    const fivePct = tenPct / 2;
-                    const result = tenPct + fivePct;
-                    return {
-                        text: `💡 **15%**: Find 10% + 5%.
-10% of ${num2} = ${tenPct}
-5% of ${num2} = ${fivePct}
-${tenPct} + ${fivePct} = ${result}`,
-                        visual: {
-                            type: 'vertical_breakdown',
-                            title: '15% = 10% + 5%',
-                            steps: [
-                                { label: '10%', value: tenPct.toString() },
-                                { label: '5%', value: fivePct.toString(), operation: '+' },
-                                { label: 'Total', value: result.toString(), highlight: true }
-                            ]
-                        }
-                    };
-                }
-                // Generic percentage
+
+                // Fallback to advanced
+                const advancedPerc = getAdvancedHint('percentages', problem);
+                if (advancedPerc) return advancedPerc;
+
+                // Generic
                 const genericResult = (p / 100) * num2Val;
                 return {
                     text: `💡 **${p}%**: Means ${p}/100.
@@ -882,6 +871,11 @@ ${n1}² = ${base10}² + 2×${base10}×${diff > 0 ? diff : `(${diff})`} + ${Math.
                         };
                     }
                 }
+
+                // Fallback to advanced hint
+                const advancedPow = getAdvancedHint('powers', problem);
+                if (advancedPow) return advancedPow;
+
                 // Generic power hint
                 return {
                     text: `💡 **Power of ${n2}**: Multiply ${n1} by itself ${n2} times.
@@ -987,133 +981,39 @@ Approximate: ${approx}`,
 
         Object.entries(skillStats).forEach(([key, stats]) => {
             const acc = (stats.correct / stats.total) * 100;
-            if (acc < lowestAccuracy) {
+            if (acc < lowestAccuracy && stats.total >= 3) {
                 lowestAccuracy = acc;
                 struggledSkillKey = key;
             }
         });
 
-        // If perfect score, pick a random skill to reinforce or the most frequent one
-        if (!struggledSkillKey && totalProblems > 0) {
-            struggledSkillKey = this.sessionHistory[0].skillKey;
-        }
-
         return {
+            totalProblems,
+            correctProblems,
             accuracy,
             avgSpeed,
-            totalProblems,
             struggledSkillKey,
-            lowestAccuracy
+            lowestAccuracy,
+            xpEarned: this.calculateXP()
         };
     }
 
-    getDetailedBreakdown(skillKey: string): { title: string; steps: string[] } {
-        const config = MICRO_SKILLS[skillKey] || MICRO_SKILLS['addition_basic'];
+    getDetailedBreakdown(skillKey: string) {
+        const config = MICRO_SKILLS[skillKey];
+        if (!config) return { title: 'Practice', steps: ['Keep practicing!'] };
 
-        switch (config.type) {
-            case 'addition':
-                return {
-                    title: 'Addition Strategy: Split & Add',
-                    steps: [
-                        'Break the second number into parts (tens and ones).',
-                        'Add the tens to the first number.',
-                        'Then add the ones to the result.'
-                    ]
-                };
-            case 'subtraction':
-                return {
-                    title: 'Subtraction Strategy: Break & Subtract',
-                    steps: [
-                        'Break the second number into parts.',
-                        'Subtract the tens from the first number.',
-                        'Then subtract the ones from the result.'
-                    ]
-                };
-            case 'multiplication':
-                return {
-                    title: 'Multiplication Strategy: Distributive Property',
-                    steps: [
-                        'Break one number into tens and ones.',
-                        'Multiply the other number by the tens.',
-                        'Multiply the other number by the ones.',
-                        'Add the two results together.'
-                    ]
-                };
-            case 'division':
-                return {
-                    title: 'Division Strategy: Inverse Multiplication',
-                    steps: [
-                        'Think of division as multiplication.',
-                        'Ask: "What number times the divisor equals the dividend?"',
-                        'Use known multiplication facts to find the answer.'
-                    ]
-                };
-            case 'fraction_simplification':
-                return {
-                    title: 'Simplifying Fractions',
-                    steps: [
-                        'Find the Greatest Common Divisor (GCD) of the numerator and denominator.',
-                        'Divide both numbers by the GCD.',
-                        'Check if the result can be simplified further.'
-                    ]
-                };
-            case 'fraction_addition':
-                return {
-                    title: 'Adding Like Fractions',
-                    steps: [
-                        'Check if the denominators (bottom numbers) are the same.',
-                        'Add the numerators (top numbers) together.',
-                        'Keep the denominator the same.',
-                        'Simplify the result if needed.'
-                    ]
-                };
-            case 'percentage_basic':
-                return {
-                    title: 'Basic Percentages',
-                    steps: [
-                        '10%: Move the decimal one place to the left.',
-                        '20%: Find 10% and double it.',
-                        '50%: Divide by 2 (find half).',
-                        '25%: Divide by 2, then divide by 2 again (half of half).'
-                    ]
-                };
-            case 'decimal_basic':
-                return {
-                    title: 'Working with Decimals',
-                    steps: [
-                        'Addition/Subtraction: Always line up the decimal points.',
-                        'Multiplication by 10: Move decimal 1 spot right.',
-                        'Multiplication by 100: Move decimal 2 spots right.',
-                        'Think of money (e.g., 0.5 is 50 cents) to visualize.'
-                    ]
-                };
-            case 'powers_basic':
-                return {
-                    title: 'Powers (Squares & Cubes)',
-                    steps: [
-                        'Square (x²): Multiply the number by itself (e.g., 5² = 5 × 5 = 25).',
-                        'Cube (x³): Multiply the number by itself twice (e.g., 2³ = 2 × 2 × 2 = 8).',
-                        'Memorize squares up to 15 for speed.'
-                    ]
-                };
-            case 'roots_basic':
-                return {
-                    title: 'Square Roots',
-                    steps: [
-                        'Think in reverse: "What number times itself equals this?"',
-                        'Example: √16 -> 4 × 4 = 16, so the answer is 4.',
-                        'Look for patterns in the last digit (e.g., numbers ending in 5 usually have roots ending in 5).'
-                    ]
-                };
-            default:
-                return {
-                    title: 'General Math Strategy',
-                    steps: [
-                        'Read the problem carefully.',
-                        'Break it down into smaller steps.',
-                        'Check your answer.'
-                    ]
-                };
-        }
+        // Return static advice based on skill type
+        return {
+            title: `Mastering ${skillKey.replace(/_/g, ' ')}`,
+            steps: [
+                config.strategyHint || 'Focus on accuracy first, then speed.',
+                'Practice heavily on this specific skill.',
+                config.feedback || 'You got this!'
+            ]
+        };
+    }
+
+    private calculateXP(): number {
+        return this.sessionHistory.filter(p => p.isCorrect).length * 10 + (this.userProfile.level * 5);
     }
 }

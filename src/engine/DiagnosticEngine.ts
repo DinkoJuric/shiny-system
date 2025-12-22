@@ -1,5 +1,13 @@
 import { generateProblem, type Problem } from './ProblemGenerator';
 
+export type ErrorType =
+    | 'CARRYING_ERROR'
+    | 'BORROWING_ERROR'
+    | 'SIGN_ERROR'
+    | 'OFF_BY_ONE'
+    | 'CALCULATION_ERROR'
+    | 'UNKNOWN';
+
 interface DiagnosticPlan {
     id: string;
     type: string;
@@ -45,7 +53,7 @@ export class DiagnosticEngine {
         };
     }
 
-    processResult(problem: Problem, userAnswer: string, timeTaken: number): { isCorrect: boolean; correctAnswer: number; isComplete: boolean } {
+    processResult(problem: Problem, userAnswer: string, timeTaken: number): { isCorrect: boolean; correctAnswer: number; isComplete: boolean; errorType?: ErrorType } {
         const isCorrect = parseInt(userAnswer) === problem.answer;
         const skill = (problem as any).skillKey;
 
@@ -59,11 +67,42 @@ export class DiagnosticEngine {
 
         this.currentIndex++;
 
+        let errorType: ErrorType | undefined;
+        if (!isCorrect) {
+            errorType = this.analyzeError(problem, parseInt(userAnswer));
+        }
+
         return {
             isCorrect,
             correctAnswer: Number(problem.answer),
             isComplete: this.currentIndex >= DIAGNOSTIC_PLAN.length,
+            errorType
         };
+    }
+
+    private analyzeError(problem: Problem, userAnswer: number): ErrorType {
+        const { num1, num2, operation, answer } = problem;
+        const diff = Math.abs(Number(answer) - userAnswer);
+
+        if (isNaN(userAnswer)) return 'UNKNOWN';
+
+        if (diff === 1) return 'OFF_BY_ONE';
+
+        if (operation === '+') {
+            // Heuristic for carrying error: if ones digit is correct but tens is off by 1 (or 10 in value)
+            if (diff === 10) return 'CARRYING_ERROR';
+        }
+
+        if (operation === '-') {
+            // Borrowing error: often leads to a difference of 10 or specific digit patterns
+            if (diff === 10 || diff === 2) return 'BORROWING_ERROR';
+        }
+
+        if (['×', 'x', '*', '÷', '/'].includes(operation)) {
+            if (userAnswer === -Number(answer)) return 'SIGN_ERROR';
+        }
+
+        return 'CALCULATION_ERROR';
     }
 
     generateReport(): DiagnosticReport {

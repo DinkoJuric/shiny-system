@@ -40,6 +40,7 @@ export interface UserProfile {
 interface AppState {
     userProfile: UserProfile;
     setUserProfile: (profile: UserProfile | ((prev: UserProfile) => UserProfile)) => void;
+    updateProfile: (updates: Partial<UserProfile>) => void;
     updateXP: (xp: number) => void;
     updateSkillProficiency: (skillKey: string, delta: number) => void;
     addSessionRecord: (record: Omit<SessionRecord, 'date'>) => void;
@@ -68,6 +69,10 @@ export const useStore = create<AppState>()(persist(
         setUserProfile: (profile) =>
             set((state) => ({
                 userProfile: typeof profile === 'function' ? profile(state.userProfile) : profile,
+            })),
+        updateProfile: (updates) =>
+            set((state) => ({
+                userProfile: { ...state.userProfile, ...updates }
             })),
         updateXP: (xpGained) =>
             set((state) => {

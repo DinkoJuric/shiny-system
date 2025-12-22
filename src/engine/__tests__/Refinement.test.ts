@@ -49,7 +49,7 @@ describe('Phase 4 Refinement', () => {
             };
             const hint = engine.getStrategyHint(problem);
             expect(hint.text).toContain('11s Trick');
-            expect(hint.text).toContain('Split the digits');
+            expect(hint.text).toContain('Split digits');
         });
 
         it('should give compensation hint for near 100 addition', () => {

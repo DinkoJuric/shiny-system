@@ -5,7 +5,7 @@ import App from './App.tsx'
 
 import { runStartupChecks } from './utils/startupChecks';
 
-import { ErrorBoundary } from './components/ErrorBoundary';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 console.log('Main.tsx executing...');
 

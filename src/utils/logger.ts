@@ -1,58 +1,60 @@
-export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+/**
+ * Structured Logger Logic
+ * Wraps console methods to provide consistent formatting, log levels, and potential for remote telemetry.
+ */
 
-export interface LogEntry {
-    timestamp: number;
-    level: LogLevel;
-    message: string;
-    data?: any;
+export enum LogLevel {
+    DEBUG = 0,
+    INFO = 1,
+    WARN = 2,
+    ERROR = 3,
 }
 
 class Logger {
-    private logs: LogEntry[] = [];
-    private maxLogs = 100;
-    private seenEvents = new Set<string>(); // Track events we've seen
+    private level: LogLevel = LogLevel.INFO;
+    private seenLogs: Set<string> = new Set();
 
-    private addLog(level: LogLevel, message: string, data?: any) {
-        const entry: LogEntry = {
-            timestamp: Date.now(),
-            level,
-            message,
-            data
-        };
-        this.logs.unshift(entry);
-        if (this.logs.length > this.maxLogs) {
-            this.logs.pop();
+    constructor() {
+        // In development, show everything. In prod, maybe only WARN/ERROR.
+        if (import.meta.env.DEV) {
+            this.level = LogLevel.DEBUG;
         }
-
-        // Console output with styling
-        const style = this.getStyle(level);
-        console.log(`%c[${level.toUpperCase()}] ${message}`, style, data || '');
     }
 
-    info(message: string, data?: any) { this.addLog('info', message, data); }
-    warn(message: string, data?: any) { this.addLog('warn', message, data); }
-    error(message: string, data?: any) { this.addLog('error', message, data); }
-    debug(message: string, data?: any) { this.addLog('debug', message, data); }
-
-    // Log only once per unique event key
-    once(key: string, level: LogLevel, message: string, data?: any) {
-        if (this.seenEvents.has(key)) return;
-        this.seenEvents.add(key);
-        this.addLog(level, message, data);
+    private format(level: string, message: string, data?: unknown) {
+        const timestamp = new Date().toISOString();
+        return `[${timestamp}] [${level}] ${message}`;
     }
 
-    getLogs() { return this.logs; }
-    clear() { this.logs = []; this.seenEvents.clear(); }
-
-    private getStyle(level: LogLevel) {
-        switch (level) {
-            case 'info': return 'color: #3b82f6';
-            case 'warn': return 'color: #f59e0b';
-            case 'error': return 'color: #ef4444; font-weight: bold';
-            case 'debug': return 'color: #9ca3af';
+    debug(message: string, data?: unknown) {
+        if (this.level <= LogLevel.DEBUG) {
+            console.debug(this.format('DEBUG', message), data || '');
         }
+    }
+
+    info(message: string, data?: unknown) {
+        if (this.level <= LogLevel.INFO) {
+            console.info(this.format('INFO', message), data || '');
+        }
+    }
+
+    warn(message: string, data?: unknown) {
+        if (this.level <= LogLevel.WARN) {
+            console.warn(this.format('WARN', message), data || '');
+        }
+    }
+
+    error(message: string, error?: unknown) {
+        if (this.level <= LogLevel.ERROR) {
+            console.error(this.format('ERROR', message), error || '');
+        }
+    }
+
+    once(key: string, level: 'debug' | 'info' | 'warn' | 'error', message: string, data?: unknown) {
+        if (this.seenLogs.has(key)) return;
+        this.seenLogs.add(key);
+        this[level](message, data);
     }
 }
 
 export const logger = new Logger();
-
