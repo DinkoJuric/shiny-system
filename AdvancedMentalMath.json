@@ -1,0 +1,1029 @@
+{
+  "title": "Mental Math Field Manual: Realistic Strategies",
+  "description": "A practical guide to calculating in your head—break the problem into pieces, conquer them one by one, then unite the victories.",
+  "version": "2.0",
+  "difficultyKey": {
+    "⭐": "Easy - Master these first",
+    "⭐⭐": "Moderate - Build on fundamentals",
+    "⭐⭐⭐": "Challenging - Advanced techniques"
+  },
+  "operations": {
+    "addition": {
+      "strategies": [
+        {
+          "name": "Round and Adjust",
+          "alias": "The Sniper Shot",
+          "difficulty": "⭐",
+          "bestFor": "Numbers close to tens, hundreds, or thousands (like 98, 297, 1003)",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "47 + 36",
+              "steps": [
+                "Round 47 → 50 (+3)",
+                "50 + 36 = 86",
+                "86 - 3 = 83"
+              ],
+              "verification": "Check: 83 - 36 = 47 ✓"
+            },
+            {
+              "problem": "298 + 456",
+              "steps": [
+                "Round 298 → 300 (+2)",
+                "300 + 456 = 756",
+                "756 - 2 = 754"
+              ],
+              "verification": "Check: 754 - 456 = 298 ✓"
+            }
+          ],
+          "caution": "Forgetting whether you rounded up or down. Mental note: 'I added 3, so subtract 3.'",
+          "proTip": "Always track your adjustment with a simple phrase like '+3 means -3 at the end.'"
+        },
+        {
+          "name": "Break Into Chunks",
+          "alias": "Divide and Conquer",
+          "difficulty": "⭐",
+          "bestFor": "When both numbers are moderate size (under 100)",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "57 + 38",
+              "steps": [
+                "Break it: 50 + 7 and 30 + 8",
+                "Add tens: 50 + 30 = 80",
+                "Add ones: 7 + 8 = 15",
+                "Combine: 80 + 15 = 95"
+              ],
+              "verification": "Check: 95 - 38 = 57 ✓"
+            },
+            {
+              "problem": "126 + 247",
+              "steps": [
+                "Break it: 100 + 20 + 6 and 200 + 40 + 7",
+                "Add hundreds: 100 + 200 = 300",
+                "Add tens: 20 + 40 = 60",
+                "Add ones: 6 + 7 = 13",
+                "Combine: 300 + 60 + 13 = 373"
+              ],
+              "verification": "Check: 373 - 247 = 126 ✓"
+            }
+          ],
+          "caution": "Losing track of partial sums. Process left-to-right and keep a running total.",
+          "proTip": null
+        },
+        {
+          "name": "Left-to-Right Addition",
+          "alias": "The Forward March",
+          "difficulty": "⭐⭐",
+          "bestFor": "Larger numbers (3+ digits) where you want a running total",
+          "requires": ["Break Into Chunks"],
+          "examples": [
+            {
+              "problem": "345 + 527",
+              "steps": [
+                "Start with hundreds: 300 + 500 = 800",
+                "Add tens: 40 + 20 = 60 → Running total: 860",
+                "Add ones: 5 + 7 = 12 → Final: 872"
+              ],
+              "verification": "Check: 872 - 527 = 345 ✓"
+            }
+          ],
+          "caution": "Forgetting to carry over when digit sums exceed 9. Pause and adjust your running total.",
+          "proTip": "This strategy scales well to 3-4 digit numbers. Your brain holds one running total while processing the next digit."
+        }
+      ]
+    },
+    "subtraction": {
+      "strategies": [
+        {
+          "name": "Add Up",
+          "alias": "The Shopkeeper's Count",
+          "difficulty": "⭐",
+          "bestFor": "Any subtraction, especially when the numbers are far apart",
+          "requires": null,
+          "whyThisWorks": "Your brain is better at adding than subtracting. This flips the problem to play to your strengths.",
+          "examples": [
+            {
+              "problem": "83 - 47",
+              "steps": [
+                "Start at 47",
+                "Jump to 50: that's +3",
+                "Jump to 80: that's +30",
+                "Jump to 83: that's +3",
+                "Total jumps: 3 + 30 + 3 = 36"
+              ],
+              "verification": "Check: 47 + 36 = 83 ✓"
+            },
+            {
+              "problem": "1000 - 678",
+              "steps": [
+                "Start at 678",
+                "To 680: +2",
+                "To 700: +20",
+                "To 1000: +300",
+                "Total: 2 + 20 + 300 = 322"
+              ],
+              "verification": "Check: 678 + 322 = 1000 ✓"
+            }
+          ],
+          "caution": "Skipping intermediate landmarks. Always jump to the nearest round number first.",
+          "proTip": "Think like a cashier making change—count up from the smaller number."
+        },
+        {
+          "name": "Round and Adjust",
+          "alias": "The Flanking Maneuver",
+          "difficulty": "⭐",
+          "bestFor": "When one number is close to a round number",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "92 - 48",
+              "steps": [
+                "Round 48 → 50 (rounded UP by 2)",
+                "92 - 50 = 42",
+                "42 + 2 = 44 (ADD back because we subtracted too much)"
+              ],
+              "verification": "Check: 44 + 48 = 92 ✓"
+            },
+            {
+              "problem": "534 - 298",
+              "steps": [
+                "Round 298 → 300 (rounded UP by 2)",
+                "534 - 300 = 234",
+                "234 + 2 = 236"
+              ],
+              "verification": "Check: 236 + 298 = 534 ✓"
+            }
+          ],
+          "caution": "CRITICAL: When rounding the subtrahend UP, ADD back. When rounding DOWN, SUBTRACT. This is OPPOSITE of addition.",
+          "proTip": "Verbalize it: 'I subtracted 2 extra, so I add 2 back.'"
+        },
+        {
+          "name": "Keep One Number Whole",
+          "alias": "The Fortress Defense",
+          "difficulty": "⭐⭐",
+          "bestFor": "Smaller subtractions where breaking down is straightforward",
+          "requires": ["Round and Adjust"],
+          "examples": [
+            {
+              "problem": "85 - 37",
+              "steps": [
+                "Keep 85 whole (the fortress)",
+                "Break the attacker: 37 = 30 + 7",
+                "Subtract 30: 85 - 30 = 55",
+                "Subtract 7: 55 - 7 = 48"
+              ],
+              "verification": "Check: 48 + 37 = 85 ✓"
+            }
+          ],
+          "caution": "Breaking the wrong number. Always keep the larger number whole.",
+          "proTip": null
+        }
+      ]
+    },
+    "multiplication": {
+      "strategies": [
+        {
+          "name": "Double and Halve",
+          "alias": "The Balance Strike",
+          "difficulty": "⭐",
+          "bestFor": "When one number is even (especially powers of 2 like 4, 8, 16, 32)",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "16 × 25",
+              "steps": [
+                "Halve 16 → 8, double 25 → 50",
+                "8 × 50 = 400"
+              ],
+              "verification": "Check: 400 ÷ 25 = 16 ✓"
+            },
+            {
+              "problem": "14 × 50",
+              "steps": [
+                "Halve 14 → 7, double 50 → 100",
+                "7 × 100 = 700"
+              ],
+              "verification": "Check: 700 ÷ 50 = 14 ✓"
+            }
+          ],
+          "caution": "Only works when at least one number is even. Can't halve odd numbers cleanly.",
+          "proTip": "Keep going if you can: 32 × 15 → 16 × 30 → 8 × 60 → 4 × 120 = 480"
+        },
+        {
+          "name": "Break Apart",
+          "alias": "Break the Line",
+          "difficulty": "⭐",
+          "bestFor": "When one number breaks nicely into tens",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "7 × 16",
+              "steps": [
+                "Break 16 into 10 + 6",
+                "7 × 10 = 70",
+                "7 × 6 = 42",
+                "70 + 42 = 112"
+              ],
+              "verification": "Check: 112 ÷ 16 = 7 ✓"
+            },
+            {
+              "problem": "123 × 12",
+              "steps": [
+                "Keep 123 whole (the fortress)",
+                "Break 12 into 10 + 2",
+                "123 × 10 = 1,230",
+                "123 × 2 = 246",
+                "1,230 + 246 = 1,476"
+              ],
+              "verification": "Check: 1,476 ÷ 12 = 123 ✓"
+            }
+          ],
+          "caution": "Breaking both numbers creates too many partial products. Keep one whole.",
+          "proTip": "Always break the smaller number and keep the larger one intact."
+        },
+        {
+          "name": "Use Anchor Facts",
+          "alias": "The Intelligence Report",
+          "difficulty": "⭐",
+          "bestFor": "When the problem is one step away from something you've memorized",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "7 × 8 (using 7 × 7 = 49)",
+              "steps": [
+                "Anchor: 7 × 7 = 49",
+                "Add one more 7: 49 + 7 = 56"
+              ],
+              "verification": "Check: 56 ÷ 8 = 7 ✓"
+            },
+            {
+              "problem": "12 × 15 (using 10 × 15)",
+              "steps": [
+                "Anchor: 10 × 15 = 150",
+                "Add: 2 × 15 = 30",
+                "150 + 30 = 180"
+              ],
+              "verification": "Check: 180 ÷ 15 = 12 ✓"
+            }
+          ],
+          "caution": "Using an anchor that's too far from your target makes this harder, not easier.",
+          "proTip": "Build your anchor fact library: squares, powers of 2, multiples of 25."
+        }
+      ]
+    },
+    "division": {
+      "strategies": [
+        {
+          "name": "Think Multiplication",
+          "alias": "The Reverse Engineering",
+          "difficulty": "⭐",
+          "bestFor": "All division, especially when you know your multiplication tables",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "72 ÷ 8",
+              "steps": [
+                "Reframe: '8 times what equals 72?'",
+                "Search: 8 × 9 = 72",
+                "Answer: 9"
+              ],
+              "verification": "Check: 9 × 8 = 72 ✓"
+            },
+            {
+              "problem": "156 ÷ 12",
+              "steps": [
+                "12 × 10 = 120 (too small by 36)",
+                "12 × 3 = 36 (accounts for remainder)",
+                "12 × 13 = 156 ✓",
+                "Answer: 13"
+              ],
+              "verification": "Check: 13 × 12 = 156 ✓"
+            }
+          ],
+          "caution": "This requires solid multiplication recall. If tables aren't automatic, drill them first.",
+          "proTip": "Division is just multiplication in reverse. Always ask 'what times divisor equals dividend?'"
+        },
+        {
+          "name": "Break Down the Dividend",
+          "alias": "Divide and Distribute",
+          "difficulty": "⭐⭐",
+          "bestFor": "When the dividend splits nicely by the divisor",
+          "requires": ["Think Multiplication"],
+          "examples": [
+            {
+              "problem": "156 ÷ 4",
+              "steps": [
+                "Break 156 into friendly chunks: 120 + 36",
+                "120 ÷ 4 = 30",
+                "36 ÷ 4 = 9",
+                "30 + 9 = 39"
+              ],
+              "verification": "Check: 39 × 4 = 156 ✓"
+            },
+            {
+              "problem": "225 ÷ 5",
+              "steps": [
+                "Break 225 into 200 + 25",
+                "200 ÷ 5 = 40",
+                "25 ÷ 5 = 5",
+                "40 + 5 = 45"
+              ],
+              "verification": "Check: 45 × 5 = 225 ✓"
+            }
+          ],
+          "caution": "Both chunks must be divisible by the divisor. 157 ÷ 4 doesn't split as cleanly.",
+          "proTip": "Look for multiples of 10 times your divisor as natural break points."
+        },
+        {
+          "name": "Halve Both Numbers",
+          "alias": "The Reduction Protocol",
+          "difficulty": "⭐",
+          "bestFor": "When both numbers are even",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "84 ÷ 12",
+              "steps": [
+                "Halve both: 42 ÷ 6",
+                "Halve again: 21 ÷ 3 = 7"
+              ],
+              "verification": "Check: 7 × 12 = 84 ✓"
+            },
+            {
+              "problem": "320 ÷ 16",
+              "steps": [
+                "Halve both: 160 ÷ 8",
+                "Halve again: 80 ÷ 4",
+                "Halve again: 40 ÷ 2 = 20"
+              ],
+              "verification": "Check: 20 × 16 = 320 ✓"
+            }
+          ],
+          "caution": "Only works when BOTH numbers are even. Stop when one becomes odd.",
+          "proTip": "This is especially powerful for powers of 2. Keep halving until trivial."
+        }
+      ]
+    },
+    "fractions": {
+      "strategies": [
+        {
+          "name": "Simplify First",
+          "alias": "Clear the Field",
+          "difficulty": "⭐",
+          "bestFor": "When fractions look unnecessarily complicated",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "4/8 + 2/6",
+              "steps": [
+                "Simplify: 4/8 = 1/2, 2/6 = 1/3",
+                "Now easier: 1/2 + 1/3",
+                "Common denominator 6: 3/6 + 2/6 = 5/6"
+              ],
+              "verification": "Check: 5/6 = 0.833..., and 4/8 + 2/6 = 0.5 + 0.333... = 0.833... ✓"
+            }
+          ],
+          "caution": "Don't skip simplification—it always makes subsequent steps easier.",
+          "proTip": "Look for common factors immediately. Divide top and bottom by the same number."
+        },
+        {
+          "name": "Convert to Common Denominators",
+          "alias": "The Unification",
+          "difficulty": "⭐⭐",
+          "bestFor": "Adding or subtracting any fractions",
+          "requires": ["Simplify First"],
+          "examples": [
+            {
+              "problem": "1/4 + 1/3",
+              "steps": [
+                "Find common denominator: LCM of 4 and 3 = 12",
+                "Convert: 1/4 = 3/12, 1/3 = 4/12",
+                "Add: 3/12 + 4/12 = 7/12"
+              ],
+              "verification": "Check: 7/12 ≈ 0.583, and 0.25 + 0.333 ≈ 0.583 ✓"
+            },
+            {
+              "problem": "2/3 - 1/2",
+              "steps": [
+                "Common denominator: 6",
+                "Convert: 2/3 = 4/6, 1/2 = 3/6",
+                "Subtract: 4/6 - 3/6 = 1/6"
+              ],
+              "verification": "Check: 1/6 ≈ 0.167, and 0.667 - 0.5 ≈ 0.167 ✓"
+            }
+          ],
+          "caution": "Finding common denominators mentally gets hard fast. If denominators are unfriendly (like 13 and 17), use a calculator.",
+          "proTip": "Memorize common LCMs: 2&3→6, 3&4→12, 4&5→20, 3&5→15."
+        },
+        {
+          "name": "Cancel Before Multiplying",
+          "alias": "The Preemptive Strike",
+          "difficulty": "⭐",
+          "bestFor": "Multiplying fractions where you can cancel common factors",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "5/6 × 3/5",
+              "steps": [
+                "Spot cancellation: 5 appears in numerator and denominator",
+                "Cancel the 5s: (1/6) × (3/1)",
+                "Also: 3 and 6 share factor 3",
+                "Cancel: (1/2) × (1/1) = 1/2"
+              ],
+              "verification": "Check: 5/6 × 3/5 = 15/30 = 1/2 ✓"
+            },
+            {
+              "problem": "2/3 × 9/4",
+              "steps": [
+                "Notice: 9 ÷ 3 = 3 (cancel)",
+                "Notice: 2 and 4 share factor 2 (cancel)",
+                "Result: 1/1 × 3/2 = 3/2"
+              ],
+              "verification": "Check: 2/3 × 9/4 = 18/12 = 3/2 ✓"
+            }
+          ],
+          "caution": "You can only cancel factors that appear in BOTH a numerator AND a denominator.",
+          "proTip": "Look diagonally! Cancel between any numerator and any denominator."
+        }
+      ]
+    },
+    "decimals": {
+      "strategies": [
+        {
+          "name": "Ignore Decimal, Then Replace",
+          "alias": "The Stealth Operation",
+          "difficulty": "⭐",
+          "bestFor": "Multiplying decimals",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "2.5 × 4",
+              "steps": [
+                "Ignore decimal: 25 × 4 = 100",
+                "Count decimal places in original: 1 place (in 2.5)",
+                "Place decimal: 10.0 = 10"
+              ],
+              "verification": "Check: 10 ÷ 4 = 2.5 ✓"
+            },
+            {
+              "problem": "0.6 × 0.7",
+              "steps": [
+                "Ignore: 6 × 7 = 42",
+                "Count decimal places: 1 + 1 = 2 total",
+                "Place decimal: 0.42"
+              ],
+              "verification": "Check: 0.42 ÷ 0.7 = 0.6 ✓"
+            }
+          ],
+          "caution": "Count decimal places in ALL numbers being multiplied, then place that many in the answer.",
+          "proTip": "For division, move decimals in BOTH numbers the same direction until the divisor is whole."
+        },
+        {
+          "name": "Convert to Fractions",
+          "alias": "The Translation",
+          "difficulty": "⭐",
+          "bestFor": "When you recognize common decimal-fraction equivalents",
+          "requires": null,
+          "commonEquivalents": {
+            "0.5": "1/2",
+            "0.25": "1/4",
+            "0.75": "3/4",
+            "0.125": "1/8",
+            "0.2": "1/5",
+            "0.333...": "1/3",
+            "0.666...": "2/3",
+            "0.1": "1/10"
+          },
+          "examples": [
+            {
+              "problem": "0.25 + 0.75",
+              "steps": [
+                "Recognize: 1/4 + 3/4",
+                "Calculate: 4/4 = 1"
+              ],
+              "verification": "Check: 0.25 + 0.75 = 1.00 ✓"
+            },
+            {
+              "problem": "0.125 × 8",
+              "steps": [
+                "Recognize: 1/8 × 8",
+                "Calculate: 8/8 = 1"
+              ],
+              "verification": "Check: 0.125 × 8 = 1.0 ✓"
+            }
+          ],
+          "caution": "Only use this when you instantly recognize the fraction. Otherwise, work with decimals directly.",
+          "proTip": "Memorize the equivalents table—it's one of the highest-value investments in mental math."
+        },
+        {
+          "name": "Round Then Adjust",
+          "alias": "The Estimation Protocol",
+          "difficulty": "⭐",
+          "bestFor": "Quick estimates when precision isn't critical",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "4.98 + 3.02",
+              "steps": [
+                "Round: 5 + 3 = 8",
+                "Check adjustment: +0.02 - 0.02 = 0",
+                "Answer: 8.0 (exact!)"
+              ],
+              "verification": "Check: 8.0 - 3.02 = 4.98 ✓"
+            },
+            {
+              "problem": "7.95 × 4",
+              "steps": [
+                "Round: 8 × 4 = 32",
+                "Adjustment: 0.05 × 4 = 0.20 (we added 0.05, so subtract)",
+                "Answer: 32 - 0.20 = 31.80"
+              ],
+              "verification": "Check: 31.80 ÷ 4 = 7.95 ✓"
+            }
+          ],
+          "caution": "Track whether you rounded up or down to adjust correctly.",
+          "proTip": "Great for shopping—$7.95 is basically $8, then adjust if you need precision."
+        }
+      ]
+    },
+    "percentages": {
+      "strategies": [
+        {
+          "name": "10% Base Method",
+          "alias": "The Foundation Strike",
+          "difficulty": "⭐",
+          "bestFor": "Any percentage calculation—this is your foundation",
+          "requires": null,
+          "examples": [
+            {
+              "problem": "15% of 80",
+              "steps": [
+                "10% of 80 = 8 (move decimal left)",
+                "5% = half of 10% = 8 ÷ 2 = 4",
+                "15% = 10% + 5% = 8 + 4 = 12"
+              ],
+              "verification": "Check: 12 ÷ 80 = 0.15 = 15% ✓"
+            },
+            {
+              "problem": "25% of 240",
+              "steps": [
+                "10% of 240 = 24",
+                "20% = 24 × 2 = 48",
+                "5% = 24 ÷ 2 = 12",
+                "25% = 20% + 5% = 48 + 12 = 60"
+              ],
+              "verification": "Check: 60 ÷ 240 = 0.25 = 25% ✓"
+            },
+            {
+              "problem": "18% tip on $45",
+              "steps": [
+                "10% of 45 = $4.50",
+                "20% = $9.00",
+                "2% = $0.90",
+                "18% = 20% - 2% = $9.00 - $0.90 = $8.10"
+              ],
+              "verification": "Check: $8.10 ÷ $45 = 0.18 = 18% ✓"
+            }
+          ],
+          "caution": "Don't try to build weird percentages like 37%—round to 35% or 40% for estimates.",
+          "proTip": "Master this one strategy and you can handle 90% of real-world percentage problems."
+        },
+        {
+          "name": "Flip the Numbers",
+          "alias": "The Switcheroo",
+          "difficulty": "⭐⭐",
+          "bestFor": "When one number is much friendlier than the other",
+          "requires": ["10% Base Method"],
+          "whyThisWorks": "Percentage calculations are commutative: 8% of 25 = 25% of 8. Order doesn't matter!",
+          "examples": [
+            {
+              "problem": "4% of 75",
+              "steps": [
+                "Flip it: 75% of 4",
+                "75% = 3/4",
+                "3/4 of 4 = 3"
+              ],
+              "verification": "Check: 3 ÷ 75 = 0.04 = 4% ✓"
+            },
+            {
+              "problem": "12% of 25",
+              "steps": [
+                "Flip it: 25% of 12",
+                "25% = 1/4",
+                "1/4 of 12 = 3"
+              ],
+              "verification": "Check: 3 ÷ 25 = 0.12 = 12% ✓"
+            },
+            {
+              "problem": "88% of 50",
+              "steps": [
+                "Flip it: 50% of 88",
+                "50% = 1/2",
+                "88 ÷ 2 = 44"
+              ],
+              "verification": "Check: 44 ÷ 50 = 0.88 = 88% ✓"
+            }
+          ],
+          "caution": "Only flip when it actually makes the calculation easier. 23% of 47 doesn't benefit from flipping.",
+          "proTip": "Look for 25%, 50%, or 75% on either side—those are your power numbers."
+        },
+        {
+          "name": "Fraction Equivalents",
+          "alias": "The Decoder Ring",
+          "difficulty": "⭐",
+          "bestFor": "Common percentages with clean fraction equivalents",
+          "requires": null,
+          "essentialEquivalents": {
+            "50%": "1/2 (divide by 2)",
+            "25%": "1/4 (divide by 4)",
+            "75%": "3/4 (multiply by 3, divide by 4)",
+            "20%": "1/5 (divide by 5)",
+            "10%": "1/10 (move decimal left)",
+            "33.3%": "≈ 1/3 (divide by 3)",
+            "66.7%": "≈ 2/3 (multiply by 2, divide by 3)",
+            "12.5%": "1/8 (divide by 8)",
+            "5%": "1/20 (divide by 20)"
+          },
+          "examples": [
+            {
+              "problem": "20% of 65",
+              "steps": [
+                "20% = 1/5",
+                "65 ÷ 5 = 13"
+              ],
+              "verification": "Check: 13 × 5 = 65 ✓"
+            },
+            {
+              "problem": "75% of 84",
+              "steps": [
+                "75% = 3/4",
+                "84 ÷ 4 = 21",
+                "21 × 3 = 63"
+              ],
+              "verification": "Check: 63 ÷ 84 = 0.75 = 75% ✓"
+            }
+          ],
+          "caution": "Only use exact equivalents. 76% is NOT 3/4.",
+          "proTip": "Tattoo these equivalents on your brain. They're the keys to fast percentage work."
+        }
+      ]
+    },
+    "powers": {
+      "strategies": [
+        {
+          "name": "Memorize Core Powers",
+          "alias": "The Arsenal",
+          "difficulty": "⭐",
+          "bestFor": "Instant recall of frequently needed values",
+          "requires": null,
+          "referenceTable": {
+            "perfectSquares": {
+              "1": 1, "2": 4, "3": 9, "4": 16, "5": 25,
+              "6": 36, "7": 49, "8": 64, "9": 81, "10": 100,
+              "11": 121, "12": 144, "13": 169, "14": 196, "15": 225,
+              "16": 256, "20": 400, "25": 625, "30": 900
+            },
+            "perfectCubes": {
+              "2": 8, "3": 27, "4": 64, "5": 125, "6": 216, "10": 1000
+            },
+            "powersOf2": {
+              "1": 2, "2": 4, "3": 8, "4": 16, "5": 32,
+              "6": 64, "7": 128, "8": 256, "9": 512, "10": 1024
+            }
+          },
+          "examples": [
+            {
+              "problem": "What is 13²?",
+              "steps": ["Direct recall: 169"],
+              "verification": "Check: √169 = 13 ✓"
+            }
+          ],
+          "caution": "Don't try to memorize everything. Focus on 1-15 squares, 2-5 cubes, and powers of 2.",
+          "proTip": "Drill these with flashcards until instant. They're the foundation for everything else."
+        },
+        {
+          "name": "Numbers Ending in 5",
+          "alias": "The Ends-in-5 Flank",
+          "difficulty": "⭐",
+          "bestFor": "Squaring any number ending in 5",
+          "requires": null,
+          "whyThisWorks": "(10a + 5)² = 100a(a+1) + 25. The pattern always produces [a×(a+1)] followed by 25.",
+          "examples": [
+            {
+              "problem": "25²",
+              "steps": [
+                "Tens digit: 2",
+                "Multiply by next integer: 2 × 3 = 6",
+                "Append 25: 625"
+              ],
+              "verification": "Check: √625 = 25 ✓"
+            },
+            {
+              "problem": "35²",
+              "steps": [
+                "Tens digit: 3",
+                "Multiply by next: 3 × 4 = 12",
+                "Append 25: 1,225"
+              ],
+              "verification": "Check: √1225 = 35 ✓"
+            },
+            {
+              "problem": "85²",
+              "steps": [
+                "Tens digit: 8",
+                "Multiply by next: 8 × 9 = 72",
+                "Append 25: 7,225"
+              ],
+              "verification": "Check: √7225 = 85 ✓"
+            },
+            {
+              "problem": "125²",
+              "steps": [
+                "Leading digits: 12",
+                "Multiply by next: 12 × 13 = 156",
+                "Append 25: 15,625"
+              ],
+              "verification": "Check: √15625 = 125 ✓"
+            }
+          ],
+          "caution": "This ONLY works for squaring. Don't try it with cubes or other operations.",
+          "proTip": "Works for any number ending in 5, even 3-digit numbers like 125."
+        },
+        {
+          "name": "Split and Square",
+          "alias": "The Split & Double Attack",
+          "difficulty": "⭐⭐",
+          "bestFor": "Squaring 2-digit numbers not ending in 5",
+          "requires": ["Memorize Core Powers"],
+          "whyThisWorks": "(a + b)² = a² + 2ab + b². Breaking into tens and units makes each piece manageable.",
+          "examples": [
+            {
+              "problem": "42²",
+              "steps": [
+                "Split: 40 and 2",
+                "Square the tens: 40² = 1,600",
+                "Square the units: 2² = 4",
+                "Double the cross product: 2 × 40 × 2 = 160",
+                "Sum: 1,600 + 160 + 4 = 1,764"
+              ],
+              "verification": "Check: √1764 = 42 ✓"
+            },
+            {
+              "problem": "23²",
+              "steps": [
+                "Split: 20 and 3",
+                "Square tens: 20² = 400",
+                "Square units: 3² = 9",
+                "Double cross: 2 × 20 × 3 = 120",
+                "Sum: 400 + 120 + 9 = 529"
+              ],
+              "verification": "Check: √529 = 23 ✓"
+            }
+          ],
+          "caution": "Don't forget the DOUBLE in '2ab'. Most common error.",
+          "proTip": "Practice the formula until automatic: square-square-double-add."
+        },
+        {
+          "name": "Build from Known Powers",
+          "alias": "The Chain Reaction",
+          "difficulty": "⭐⭐",
+          "bestFor": "When you need a power one step away from a memorized value",
+          "requires": ["Memorize Core Powers"],
+          "examples": [
+            {
+              "problem": "2⁵ (knowing 2⁴ = 16)",
+              "steps": [
+                "2⁴ = 16",
+                "2⁵ = 2⁴ × 2 = 16 × 2 = 32"
+              ],
+              "verification": "Check: 32 ÷ 2 = 16 = 2⁴ ✓"
+            },
+            {
+              "problem": "6³ (knowing 6² = 36)",
+              "steps": [
+                "6² = 36",
+                "6³ = 6² × 6 = 36 × 6 = 216"
+              ],
+              "verification": "Check: 216 ÷ 6 = 36 = 6² ✓"
+            }
+          ],
+          "caution": "Only useful when you're one or two steps from a known value.",
+          "proTip": "Combine with exponent rules: 2¹⁰ = 2⁵ × 2⁵ = 32 × 32 = 1,024"
+        },
+        {
+          "name": "Cube Expansion",
+          "alias": "The Heavy Artillery",
+          "difficulty": "⭐⭐⭐",
+          "bestFor": "Cubing small 2-digit numbers",
+          "requires": ["Memorize Core Powers", "Split and Square"],
+          "whyThisWorks": "(a + b)³ = a³ + 3a²b + 3ab² + b³",
+          "examples": [
+            {
+              "problem": "12³",
+              "steps": [
+                "Split: 10 and 2",
+                "Cube the tens (a³): 10³ = 1,000",
+                "First middle (3a²b): 3 × 100 × 2 = 600",
+                "Second middle (3ab²): 3 × 10 × 4 = 120",
+                "Cube the units (b³): 2³ = 8",
+                "Sum: 1,000 + 600 + 120 + 8 = 1,728"
+              ],
+              "verification": "Check: ³√1728 = 12 ✓"
+            }
+          ],
+          "caution": "This is heavy lifting. Don't attempt without paper unless the number is very small (like 11, 12, or 13).",
+          "proTip": "For cubes, often faster to compute n² × n using the squaring method first."
+        }
+      ]
+    },
+    "roots": {
+      "strategies": [
+        {
+          "name": "Memorize Perfect Squares",
+          "alias": "The Foundation Map",
+          "difficulty": "⭐",
+          "bestFor": "Instant recognition of perfect squares",
+          "requires": null,
+          "referenceTable": {
+            "1": 1, "4": 2, "9": 3, "16": 4, "25": 5,
+            "36": 6, "49": 7, "64": 8, "81": 9, "100": 10,
+            "121": 11, "144": 12, "169": 13, "196": 14, "225": 15,
+            "256": 16, "289": 17, "324": 18, "361": 19, "400": 20,
+            "625": 25, "900": 30, "10000": 100
+          },
+          "examples": [
+            {
+              "problem": "√144",
+              "steps": ["Direct recall: 12"],
+              "verification": "Check: 12 × 12 = 144 ✓"
+            }
+          ],
+          "caution": "You must know these cold. Everything else builds on this.",
+          "proTip": "Test yourself: cover the answers and quiz until instant."
+        },
+        {
+          "name": "Bracket and Hunt",
+          "alias": "The Perimeter Search",
+          "difficulty": "⭐⭐",
+          "bestFor": "Perfect squares you don't recognize, or getting close estimates",
+          "requires": ["Memorize Perfect Squares"],
+          "examples": [
+            {
+              "problem": "√529 (perfect square)",
+              "steps": [
+                "Bracket: 20² = 400, 30² = 900",
+                "Target is between 20 and 30",
+                "Last digit is 9 → root ends in 3 or 7",
+                "529 is closer to 400 → try 23",
+                "23 × 23 = 529 ✓"
+              ],
+              "verification": "Status: Victory. √529 = 23"
+            },
+            {
+              "problem": "√50 (not perfect)",
+              "steps": [
+                "Bracket: √49 = 7, √64 = 8",
+                "50 is between 49 and 64",
+                "50 is very close to 49 (only 1 away vs 14 away)",
+                "Estimate: about 7.1"
+              ],
+              "verification": "Check: 7.07² ≈ 50 ✓"
+            },
+            {
+              "problem": "√120",
+              "steps": [
+                "Bracket: √100 = 10, √121 = 11",
+                "120 is extremely close to 121 (only 1 away)",
+                "Estimate: about 10.95"
+              ],
+              "verification": "Check: 10.95² ≈ 120 ✓"
+            }
+          ],
+          "caution": "For perfect squares, remember: only 0,1,4,5,6,9 can be final digits of perfect squares.",
+          "proTip": "Last-digit analysis: 1→1,9 | 4→2,8 | 5→5 | 6→4,6 | 9→3,7"
+        },
+        {
+          "name": "Factor Out Perfect Squares",
+          "alias": "The Extraction Protocol",
+          "difficulty": "⭐⭐",
+          "bestFor": "When the number has obvious square factors",
+          "requires": ["Memorize Perfect Squares"],
+          "commonRoots": {
+            "√2": 1.414,
+            "√3": 1.732,
+            "√5": 2.236,
+            "√7": 2.646
+          },
+          "examples": [
+            {
+              "problem": "√200",
+              "steps": [
+                "Factor: 200 = 100 × 2",
+                "Extract: √200 = √100 × √2 = 10√2",
+                "Approximate: 10 × 1.414 = 14.14"
+              ],
+              "verification": "Check: 14.14² ≈ 200 ✓"
+            },
+            {
+              "problem": "√72",
+              "steps": [
+                "Factor: 72 = 36 × 2",
+                "Extract: √72 = √36 × √2 = 6√2",
+                "Approximate: 6 × 1.414 = 8.49"
+              ],
+              "verification": "Check: 8.49² ≈ 72 ✓"
+            },
+            {
+              "problem": "√450",
+              "steps": [
+                "Factor: 450 = 225 × 2",
+                "Extract: √450 = √225 × √2 = 15√2",
+                "Approximate: 15 × 1.414 = 21.21"
+              ],
+              "verification": "Check: 21.21² ≈ 450 ✓"
+            }
+          ],
+          "caution": "Look for the LARGEST perfect square factor to minimize remaining work.",
+          "proTip": "Memorize √2 ≈ 1.414, √3 ≈ 1.732, √5 ≈ 2.236. These appear constantly."
+        },
+        {
+          "name": "Newton's Approximation",
+          "alias": "The Precision Strike",
+          "difficulty": "⭐⭐⭐",
+          "bestFor": "When you need more precision than bracketing provides",
+          "requires": ["Bracket and Hunt", "Division basics"],
+          "whyThisWorks": "Newton's method: new_guess = (guess + number/guess) / 2. Converges rapidly to the actual root.",
+          "examples": [
+            {
+              "problem": "√48 (initial guess: 7)",
+              "steps": [
+                "Divide: 48 ÷ 7 ≈ 6.86",
+                "Average: (7 + 6.86) ÷ 2 = 6.93"
+              ],
+              "verification": "Check: 6.93² = 48.02 ≈ 48 ✓"
+            },
+            {
+              "problem": "√85 (initial guess: 9)",
+              "steps": [
+                "Divide: 85 ÷ 9 ≈ 9.44",
+                "Average: (9 + 9.44) ÷ 2 = 9.22"
+              ],
+              "verification": "Check: 9.22² = 85.0 ✓"
+            }
+          ],
+          "caution": "This is the practical limit of mental math for roots. Beyond this, use a calculator.",
+          "proTip": "One iteration usually gets you to 2 decimal places. Good enough for nearly all real-world needs."
+        }
+      ]
+    }
+  },
+  "practiceTips": [
+    {
+      "type": "principle",
+      "title": "Start Small",
+      "content": "Pick one strategy per operation. Master it completely before collecting more techniques."
+    },
+    {
+      "type": "principle",
+      "title": "Know Your Weak Spots",
+      "content": "Most people struggle with 7s, 8s, and 9s in multiplication. Whatever your weak spot is, drill it specifically."
+    },
+    {
+      "type": "schedule",
+      "title": "Progressive Mastery Plan",
+      "content": {
+        "week1_2": "Round and adjust for addition/subtraction; multiplication tables through 12",
+        "week3_4": "Break apart method; percentage basics (10%, 50%, 25%)",
+        "week5_6": "Advanced techniques (flip percentages, numbers ending in 5)",
+        "ongoing": "Practice with real-world situations daily"
+      }
+    },
+    {
+      "type": "principle",
+      "title": "Use It or Lose It",
+      "content": "Mental math is like a muscle. Calculate tips at restaurants. Figure out discounts while shopping. Add up scores without your phone. Make it part of your daily routine."
+    },
+    {
+      "type": "principle",
+      "title": "Accuracy Before Speed",
+      "content": "A fast wrong answer helps nobody. Get comfortable being slow and right before you try to go fast."
+    },
+    {
+      "type": "principle",
+      "title": "Know When to Bail",
+      "content": "If you're three steps into a calculation and losing track, that's a sign this particular problem isn't worth solving mentally. No shame in using tools."
+    },
+    {
+      "type": "caution",
+      "title": "Don't Force It",
+      "content": "Some calculations are genuinely annoying to do mentally. That's what calculators are for. The goal is to be faster and more confident with everyday numbers, not to torture yourself with 4-digit multiplication."
+    }
+  ],
+  "philosophy": {
+    "corePrinciple": "There's no magic here. These strategies work because they break big problems into small, manageable pieces your brain can actually handle.",
+    "brainScience": "The human brain wasn't designed to multiply 4-digit numbers. It was designed to recognize patterns, chunk information, and build on what it knows. These strategies leverage those natural strengths instead of fighting them.",
+    "pathToMastery": "Practice the basics until they're automatic, then the complex stuff gets easier by itself. Start with single-digit mastery, build to double digits, and only then worry about pushing your limits.",
+    "realityCheck": "Nobody needs to mentally calculate 4-digit multiplication in the real world. Even mathematicians use calculators for that. The value of mental math isn't showing off—it's building number sense, confidence, and the ability to catch errors when they matter."
+  }
+}

@@ -1,0 +1,77 @@
+Here is your field manual. No fluff. No letters. Just the tactics you need to execute.
+You have the potential. Now, discipline your mind.
+
+THE MINDSET
+Math is not magic. It is a battle plan. Break the enemy (the problem) into small, weak pieces. Crush them one by one. Then, reunite the victories.
+
+
+1. THE SQUARE ROOT PROTOCOL (3-Digit Numbers)
+Mission: Find the root of a perfect square. 
+Tactic: Squeeze the number between easy tens, then hunt the last digit.
+Target: sqrt(529)
+1. Establish the Perimeter (Range):
+o 20 x 20 = 400 (Too small)
+o 30 x 30 = 900 (Too big)
+o Intel: The target is between 20 and 30.
+2. Identify the Weak Point (Last Digit):
+o The number ends in 9.
+o What single digit times itself ends in 9?
+o It is either 3 (3 x 3 = 9) or 7 (7 x 7 = 49).
+3. Strike (Select the Candidate):
+o Possibilities: 23 or 27.
+o 529 is closer to 400 (20s) than 900 (30s).
+o Strike: Guess 23.
+4. Verify:
+o 23 x 23 = (20+3) x (20+3).
+o 400 + 120 + 9 = 529.
+o Victory.
+2. THE SQUARING STRIKE (Power of 2)
+Mission: Multiply a number by itself.
+A. The "Ends in 5" Flank (Special Case) Target: 65^2
+1. The Setup: Take the first digit (6).
+2. The Boost: Multiply it by the number above it.
+o 6 x 7 = 42
+3. The Finisher: Attach "25" to the end.
+o Result: 4,225
+B. The "Split & Double" Attack (General Case) Target: 42^2
+1. Split the Force: Break 42 into 40 and 2.
+2. Square the Heavy: 40 x 40 = 1,600
+3. Square the Light: 2 x 2 = 4
+4. Double the Product (Crucial Step):
+o Multiply the parts: 40 x 2 = 80.
+o Double it: 80 + 80 = 160.
+5. Unite: 1,600 + 160 + 4 = 1,764.
+
+3. THE CUBE CHALLENGE (Power of 3)
+Mission: Multiply a number by itself, then by itself again. Warning: This is heavy lifting. Do not engage without paper unless the number is small.
+Tactic: Cube the Tens, Cube the Units, fill the middle. Target: 12^3
+1. Split: 10 and 2.
+2. The Front: Cube the Ten (10 x 10 x 10 = 1,000).
+3. The Back: Cube the Unit (2 x 2 x 2 = 8).
+4. The Middle Grind:
+o Zone 1: 3 x (10 x 10) x 2 = 3 x 100 x 2 = 600
+o Zone 2: 3 x 10 x (2 x 2) = 3 x 10 x 4 = 120
+5. Unite: 1,000 + 600 + 120 + 8 = 1,728.
+Spartan Note: If this is too heavy, memorize cubes 1 through 10. Fight battles you can win.
+
+4. MULTIPLICATION TACTIC (2 & 3 Digit Numbers)
+Mission: Multiply two uneven numbers. Tactic: "Break the Line." Keep the big number whole. Break the small number apart.
+Target: 123 x 12
+1. Recon: 123 is the fortress. 12 is the attacker.
+2. Break the Attacker: Split 12 into 10 and 2.
+3. First Wave (The 10):
+o 123 x 10 = 1,230 (Easy. Just add a zero.)
+4. Second Wave (The 2):
+o 123 x 2 = 246 (Double the number.)
+5. Victory:
+o 1,230 + 246 = 1,476.
+Target: 32 x 21
+1. Break: Split 21 into 20 and 1.
+2. First Wave: 32 x 20.
+o Think: 32 x 2 = 64.
+o Add zero: 640.
+3. Second Wave: 32 x 1 = 32.
+4. Victory: 640 + 32 = 672.
+
+FINAL ORDERS: Do not rush. Precision first. Speed later. Start training.
+
