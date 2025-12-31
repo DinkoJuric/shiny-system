@@ -7,12 +7,20 @@ import SessionSummary from './SessionSummary';
 import { VisualHintRenderer } from './VisualHintRenderer';
 import { logger } from '../utils/logger';
 import { TutorEngine } from '../engine/TutorEngine';
-import type { TutorGuide } from '../engine/TutorEngine';
+import type { TutorState } from '../engine/TutorEngine';
 import { BreakdownModal } from './widgets/BreakdownModal';
+import { DiagnosticEngine } from '../engine/DiagnosticEngine';
 
 const GameScreen = () => {
     const { userProfile, updateProfile } = useStore();
     const [engine] = useState(() => new AdaptiveEngine(userProfile));
+    // Instantiate TutorEngine. We can reuse the DiagnosticEngine instance if AdaptiveEngine exposes it, 
+    // or create a new one. AdaptiveEngine likely uses DiagnosticEngine internally, but for now capturing logic we'll create one.
+    // Ideally AdaptiveEngine should expose it or we pass it in. 
+    // Let's assume for now we create a lightweight instance or if AdaptiveEngine has it.
+    // Looking at imports, DiagnosticEngine is available.
+    const [tutorEngine] = useState(() => new TutorEngine(new DiagnosticEngine()));
+
     const [currentProblem, setCurrentProblem] = useState<any>(null);
     const [userAnswer, setUserAnswer] = useState('');
     const [feedback, setFeedback] = useState<ProblemResult | null>(null);
@@ -24,7 +32,7 @@ const GameScreen = () => {
     const [xpGained, setXpGained] = useState(0);
 
     // Tutor Engine Extensions
-    const [tutorGuide, setTutorGuide] = useState<TutorGuide | null>(null);
+    const [tutorState, setTutorState] = useState<TutorState>({ shouldShowBreakdown: false, solutionSteps: [] });
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Initial Load
@@ -42,11 +50,18 @@ const GameScreen = () => {
 
     const loadNextProblem = () => {
         const problem = engine.getNextProblem();
+
+        // Reset Tutor Engine for new problem
+        if (problem) {
+            tutorEngine.resetForNewProblem(problem);
+        }
+
         setCurrentProblem(problem);
         setUserAnswer('');
         setFeedback(null);
         setShowHint(false);
-        setTutorGuide(null); // Reset tutor guide
+        setTutorState({ shouldShowBreakdown: false, solutionSteps: [] }); // Reset tutor state
+        setIsModalOpen(false);
         setStartTime(Date.now());
         setTimeout(() => inputRef.current?.focus(), 50);
     };
@@ -64,6 +79,14 @@ const GameScreen = () => {
             score: prev.score + (result.isCorrect ? 10 : 0) // Simple score
         }));
 
+        // Tutor Orchestrator Check
+        const newTutorState = tutorEngine.handleAttempt(currentProblem, result.isCorrect);
+        setTutorState(newTutorState);
+
+        if (newTutorState.shouldShowBreakdown) {
+            setTimeout(() => setIsModalOpen(true), 1500); // Small delay to let user see "Incorrect" first
+        }
+
         // XP Calculation & Level Up
         const xp = ExperienceEngine.calculateXP(result.isCorrect, timeTaken, userProfile.level || 1, result.streak);
         if (xp > 0) {
@@ -76,12 +99,10 @@ const GameScreen = () => {
 
         if (result.isCorrect) {
             setTimeout(loadNextProblem, 1000); // Auto-advance if correct
-        } else {
-            // Tutor Logic: Generate guide on error
-            const guide = TutorEngine.generateGuide(currentProblem, userAnswer);
-            setTutorGuide(guide);
         }
     };
+
+    // ... existing handlers ...
 
     const handleContinue = () => {
         setShowSummary(false);
@@ -109,11 +130,11 @@ const GameScreen = () => {
     return (
         <div className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-2xl mx-auto animate-in relative -mt-16 overflow-visible">
             <BreakdownModal
-                guide={tutorGuide}
+                steps={tutorState.solutionSteps}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
             />
-            {/* Active Plan Banner */}
+            {/* ... rest of render ... */}
             {userProfile.activePlan && (
                 <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-primary-500/20 border border-primary-500/30 px-4 py-1 rounded-full flex items-center space-x-2 whitespace-nowrap">
                     <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
@@ -203,7 +224,7 @@ const GameScreen = () => {
                     )}
                 </div>
 
-                {/* Hint Display (Pre-answer) - positioned ABOVE input to avoid overflow */}
+                {/* Hint Display */}
                 {showHint && !feedback && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 w-80 max-h-64 overflow-y-auto bg-slate-800/95 backdrop-blur-md p-4 rounded-xl border border-slate-700 shadow-xl animate-in fade-in slide-in-from-bottom-2 z-20">
                         <VisualHintRenderer hint={engine.getStrategyHint(currentProblem)} visualEnabled={userProfile.visualHintsEnabled || false} />
@@ -234,20 +255,24 @@ const GameScreen = () => {
                                         Answer: {feedback.correctAnswer}{' '}
                                         <span className="text-xs opacity-50">(Press Enter)</span>
                                     </span>
-                                    {tutorGuide && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsModalOpen(true)}
-                                            className="mt-3 text-sm text-indigo-400 hover:text-indigo-300 underline underline-offset-4 font-medium transition-colors"
-                                        >
-                                            Wait, explain why?
-                                        </button>
-                                    )}
+                                    {/* Manual Trigger for Tutor */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const breakdown = tutorEngine.getBreakdown(currentProblem);
+                                            setTutorState(breakdown);
+                                            setIsModalOpen(true);
+                                        }}
+                                        className="mt-3 text-sm text-indigo-400 hover:text-indigo-300 underline underline-offset-4 font-medium transition-colors"
+                                    >
+                                        Wait, explain why?
+                                    </button>
                                 </>
                             )}
                         </div>
                     )}
                 </div>
+
 
                 {!feedback && (
                     <div className="flex gap-2 mt-6">

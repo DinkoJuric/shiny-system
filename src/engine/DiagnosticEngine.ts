@@ -85,17 +85,27 @@ export class DiagnosticEngine {
         const diff = Math.abs(Number(answer) - userAnswer);
 
         if (isNaN(userAnswer)) return 'UNKNOWN';
-
         if (diff === 1) return 'OFF_BY_ONE';
 
+        // Carrying error detection (Addition)
         if (operation === '+') {
-            // Heuristic for carrying error: if ones digit is correct but tens is off by 1 (or 10 in value)
+            const lastDigit1 = num1 % 10;
+            const lastDigit2 = num2 % 10;
+            // If they just summed the digits without carrying (e.g. 15+9 -> 5+9=14, write 4, 1+0=1 -> 14... wait. 
+            // Classic carrying error: 15+5 = 10 (forgot the 10) or 19 (forgot to add carried 1).
+            // A common heuristic: result is exactly 10 less than answer
             if (diff === 10) return 'CARRYING_ERROR';
         }
 
+        // Borrowing error detection (Subtraction)
         if (operation === '-') {
-            // Borrowing error: often leads to a difference of 10 or specific digit patterns
-            if (diff === 10 || diff === 2) return 'BORROWING_ERROR';
+            // Common borrowing error: 25 - 9. 5-9 -> "9-5=4", 2-0=2 -> 24. (Answer is 16). Diff is 8.
+            // Another: 32 - 15. 2-5 -> "5-2=3", 3-1=2 -> 23. (Answer is 17). Diff is 6.
+            // Heuristic: If the ones digit of the user answer is the absolute difference of the ones digits (reversed subtraction)
+            const ansOnes = Number(answer) % 10;
+            const userOnes = userAnswer % 10;
+            // complex to detect perfectly without more granular state, but diff=10 is a strong signal for "forgot to borrow check"
+            if (diff === 10) return 'BORROWING_ERROR';
         }
 
         if (['×', 'x', '*', '÷', '/'].includes(operation)) {
@@ -103,6 +113,56 @@ export class DiagnosticEngine {
         }
 
         return 'CALCULATION_ERROR';
+    }
+
+    generateSolutionSteps(problem: Problem): string[] {
+        const { num1, num2, operation } = problem;
+        const steps: string[] = [];
+
+        if (operation === '+') {
+            // Strategy: Split by place value
+            if (num2 < 10) {
+                steps.push(`Start with ${num1}.`);
+                const distanceToTen = 10 - (num1 % 10);
+                if (num1 % 10 !== 0 && num2 > distanceToTen) {
+                    steps.push(`Add ${distanceToTen} to make ${num1 + distanceToTen}.`);
+                    steps.push(`You have ${num2 - distanceToTen} left to add.`);
+                    steps.push(`${num1 + distanceToTen} + ${num2 - distanceToTen} = ${num1 + num2}`);
+                } else {
+                    steps.push(`${num1} + ${num2} = ${num1 + num2}`);
+                }
+            } else {
+                steps.push(`Split ${num2} into tens and ones: ${Math.floor(num2 / 10) * 10} + ${num2 % 10}`);
+                steps.push(`${num1} + ${Math.floor(num2 / 10) * 10} = ${num1 + Math.floor(num2 / 10) * 10}`);
+                steps.push(`Now add the ones: ${num1 + Math.floor(num2 / 10) * 10} + ${num2 % 10} = ${num1 + num2}`);
+            }
+        } else if (operation === '-') {
+            // Strategy: Subtract to nearest ten
+            const ones = num1 % 10;
+            if (num2 < 10 && ones < num2) {
+                steps.push(`Split ${num2} into ${ones} and ${num2 - ones}.`);
+                steps.push(`${num1} - ${ones} = ${num1 - ones}`);
+                steps.push(`${num1 - ones} - ${num2 - ones} = ${num1 - num2}`);
+            } else {
+                steps.push(`${num1} - ${num2} = ${num1 - num2}`);
+            }
+        } else if (operation === '*' || operation === '×' || operation === 'x') {
+            // Strategy: Break down standard multiplication
+            if (num2 > 10) {
+                const tens = Math.floor(num2 / 10) * 10;
+                const ones = num2 % 10;
+                steps.push(`Split ${num2} into ${tens} + ${ones}.`);
+                steps.push(`${num1} × ${tens} = ${num1 * tens}`);
+                steps.push(`${num1} × ${ones} = ${num1 * ones}`);
+                steps.push(`Add them together: ${num1 * tens} + ${num1 * ones} = ${num1 * num2}`);
+            } else {
+                steps.push(`${num1} × ${num2} = ${num1 * num2}`);
+            }
+        } else {
+            steps.push(`${num1} ${operation} ${num2} = ${problem.answer}`);
+        }
+
+        return steps;
     }
 
     generateReport(): DiagnosticReport {

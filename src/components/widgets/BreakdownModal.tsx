@@ -1,81 +1,76 @@
-import type { TutorGuide } from '../../engine/TutorEngine';
-import { XCircle, Lightbulb, CheckCircle2 } from 'lucide-react';
+import React from 'react';
+import { X, Lightbulb } from 'lucide-react';
 
 interface BreakdownModalProps {
-    guide: TutorGuide | null;
     isOpen: boolean;
     onClose: () => void;
+    steps: string[];
+    strategyName?: string;
 }
 
-export function BreakdownModal({ guide, isOpen, onClose }: BreakdownModalProps) {
-    if (!isOpen || !guide) return null;
+export const BreakdownModal: React.FC<BreakdownModalProps> = ({ isOpen, onClose, steps, strategyName }) => {
+    if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in">
-            <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-elegant max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+                onClick={onClose}
+            />
 
-                {/* Header */} /* ... same ... */
-                <div className="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-900/50">
-                    <div>
-                        <div className="flex items-center space-x-2 text-red-400 mb-1">
-                            <XCircle className="w-5 h-5" />
-                            <span className="font-bold uppercase tracking-wider text-xs">{guide.errorType.replace(/_/g, ' ')}</span>
+            {/* Modal Content */}
+            <div className="relative w-full max-w-lg overflow-hidden rounded-2xl glass shadow-elegant animate-slide-up border border-white/20">
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/5">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-amber-400/20 text-amber-400">
+                            <Lightbulb size={24} />
                         </div>
-                        <h2 className="text-xl font-bold text-slate-100">Let's Break It Down</h2>
+                        <h2 className="text-xl font-bold text-white">Let's Break It Down</h2>
                     </div>
+                    <button
+                        onClick={onClose}
+                        className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 overflow-y-auto space-y-6">
-                    {/* Strategy Hint */}
-                    <div className="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-4 flex gap-4 shadow-sm">
-                        <div className="bg-indigo-500/20 p-2 rounded-lg h-fit">
-                            <Lightbulb className="w-5 h-5 text-indigo-400" />
+                {/* Body */}
+                <div className="p-6 space-y-4">
+                    {strategyName && (
+                        <div className="text-sm font-medium text-blue-300 uppercase tracking-wider mb-2">
+                            Strategy: {strategyName}
                         </div>
-                        <div>
-                            <h3 className="font-semibold text-indigo-300 text-sm mb-1">Concept Strategy</h3>
-                            <p className="text-slate-300 text-sm leading-relaxed">{guide.strategy}</p>
-                        </div>
-                    </div>
+                    )}
 
-                    {/* Step by Step */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Step-by-Step Solution</h3>
-                        <div className="relative border-l-2 border-slate-800 ml-3 space-y-8 pl-8 py-2">
-                            {guide.steps.map((step, index) => (
-                                <div key={index} className="relative group" style={{ animationDelay: `${index * 150}ms` }}>
-                                    <div className="absolute -left-[39px] top-1 w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-indigo-500 group-hover:text-indigo-400 transition-colors">
-                                        {index + 1}
-                                    </div>
-                                    <p className="text-slate-200 font-medium mb-1">{step.text}</p>
-                                    {step.subCalculation && (
-                                        <div className="font-mono text-sm text-emerald-400 bg-emerald-950/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-900/30 shadow-sm mt-1">
-                                            {step.subCalculation}
-                                        </div>
-                                    )}
+                    <div className="space-y-3">
+                        {steps.map((step, index) => (
+                            <div
+                                key={index}
+                                className="flex gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                                style={{ animationDelay: `${index * 100}ms` }}
+                            >
+                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm font-bold mt-0.5">
+                                    {index + 1}
                                 </div>
-                            ))}
-                            {/* Final Check */}
-                            <div className="relative">
-                                <div className="absolute -left-[39px] top-0 w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-900/50">
-                                    <CheckCircle2 className="w-4 h-4 text-white" />
-                                </div>
-                                <p className="text-emerald-400 font-bold text-lg">Solved!</p>
+                                <p className="text-gray-100 text-lg leading-relaxed">{step}</p>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-slate-800 bg-slate-900/50 flex justify-end">
+                <div className="p-6 border-t border-white/10 bg-white/5 flex justify-end">
                     <button
                         onClick={onClose}
-                        className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-6 rounded-lg transition-all focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-lg shadow-indigo-500/20 active:scale-95"
+                        className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95"
                     >
-                        Got it, thanks!
+                        Got it!
                     </button>
                 </div>
             </div>
         </div>
     );
-}
+};

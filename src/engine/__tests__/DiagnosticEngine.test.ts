@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { DiagnosticEngine } from '../DiagnosticEngine';
-import { Problem } from '../ProblemGenerator';
+import type { Problem } from '../ProblemGenerator';
 
 describe('DiagnosticEngine', () => {
     let engine: DiagnosticEngine;
@@ -56,5 +56,33 @@ describe('DiagnosticEngine', () => {
         const result = engine.processResult(problem, '20', 1);
         expect(result.isCorrect).toBe(false);
         expect(result.errorType).toBe('CALCULATION_ERROR');
+    });
+
+    describe('generateSolutionSteps', () => {
+        it('should generate steps for simple addition', () => {
+            const problem: Problem = { id: 't1', type: 'addition', num1: 15, num2: 4, operation: '+', answer: 19 };
+            const steps = engine.generateSolutionSteps(problem);
+            expect(steps.length).toBeGreaterThan(0);
+            expect(steps[0]).toContain('Start with 15');
+        });
+
+        it('should generate decomposition steps for larger addition', () => {
+            const problem: Problem = { id: 't2', type: 'addition', num1: 25, num2: 12, operation: '+', answer: 37 };
+            const steps = engine.generateSolutionSteps(problem);
+            // Expecting breakdown of 12 -> 10 + 2
+            expect(steps.some(s => s.includes('Split 12'))).toBe(true);
+        });
+
+        it('should generate steps for simple subtraction', () => {
+            const problem: Problem = { id: 't3', type: 'subtraction', num1: 25, num2: 4, operation: '-', answer: 21 };
+            const steps = engine.generateSolutionSteps(problem);
+            expect(steps.some(s => s.includes('25 - 4'))).toBe(true);
+        });
+
+        it('should generate breakdown steps for multiplication', () => {
+            const problem: Problem = { id: 't4', type: 'multiplication', num1: 15, num2: 12, operation: '×', answer: 180 };
+            const steps = engine.generateSolutionSteps(problem);
+            expect(steps.some(s => s.includes('Split 12'))).toBe(true);
+        });
     });
 });
