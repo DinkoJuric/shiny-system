@@ -34,6 +34,7 @@ const GameScreen = () => {
     // Tutor Engine Extensions
     const [tutorState, setTutorState] = useState<TutorState>({ shouldShowBreakdown: false, solutionSteps: [] });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [drillQueue, setDrillQueue] = useState<any[]>([]); // Queue for drill problems
 
     // Initial Load
     useEffect(() => {
@@ -49,11 +50,17 @@ const GameScreen = () => {
     }, [questionsAnswered, feedback]);
 
     const loadNextProblem = () => {
-        const problem = engine.getNextProblem();
+        let problem;
 
-        // Reset Tutor Engine for new problem
-        if (problem) {
-            tutorEngine.resetForNewProblem(problem);
+        if (drillQueue.length > 0) {
+            const [nextDrill, ...remaining] = drillQueue;
+            problem = nextDrill;
+            setDrillQueue(remaining);
+        } else {
+            problem = engine.getNextProblem();
+            if (problem) {
+                tutorEngine.resetForNewProblem(problem);
+            }
         }
 
         setCurrentProblem(problem);
@@ -126,6 +133,7 @@ const GameScreen = () => {
     if (!currentProblem) return <div className="text-white">Loading...</div>;
 
     const levelInfo = ExperienceEngine.getLevelProgress(userProfile.xp || 0);
+    const isDrillMode = drillQueue.length > 0 || (currentProblem.id && currentProblem.id.startsWith('drill'));
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-2xl mx-auto animate-in relative -mt-16 overflow-visible">
@@ -135,10 +143,17 @@ const GameScreen = () => {
                 onClose={() => setIsModalOpen(false)}
             />
             {/* ... rest of render ... */}
-            {userProfile.activePlan && (
+            {userProfile.activePlan && !isDrillMode && (
                 <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-primary-500/20 border border-primary-500/30 px-4 py-1 rounded-full flex items-center space-x-2 whitespace-nowrap">
                     <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
                     <span className="text-xs font-bold text-primary-300 uppercase tracking-wider">Training Plan: {userProfile.activePlan.name}</span>
+                </div>
+            )}
+
+            {drillQueue.length > 0 && (
+                <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-amber-500/20 border border-amber-500/30 px-4 py-1 rounded-full flex items-center space-x-2 whitespace-nowrap">
+                    <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"></span>
+                    <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">Drill Mode: {drillQueue.length + 1} Remaining</span>
                 </div>
             )}
 

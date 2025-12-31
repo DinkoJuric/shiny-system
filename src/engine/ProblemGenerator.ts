@@ -243,7 +243,6 @@ export const generateProblem = (
                 operation: '÷',
                 answer: num2,
             };
-        default:
             return {
                 id: generateId(),
                 type: 'addition',
@@ -253,4 +252,64 @@ export const generateProblem = (
                 answer: num1 + num2,
             };
     }
+};
+
+export const generateProblemFromError = (originalProblem: Problem, errorType?: string): Problem => {
+    // Basic fallback: same type, similar numbers
+    const difficultyMultiplier = originalProblem.num1.toString().length;
+    let min = Math.pow(10, difficultyMultiplier - 1);
+    let max = Math.pow(10, difficultyMultiplier);
+
+    // Adjust min/max based on original numbers if they are numbers
+    if (typeof originalProblem.num1 === 'number') {
+        min = Math.floor(originalProblem.num1 * 0.5);
+        max = Math.ceil(originalProblem.num1 * 1.5);
+    }
+
+    if (errorType === 'CARRYING_ERROR' && originalProblem.operation === '+') {
+        // Force a carrying problem
+        // e.g. 15 + 7.  5+7 > 10.
+        const num1 = Math.floor(Math.random() * (max - min)) + min;
+        const ones1 = num1 % 10;
+        // ensure ones2 + ones1 >= 10
+        const minOnes2 = 10 - ones1;
+        // Force at least one digit to cause carry
+        const num2Base = Math.floor(Math.random() * (max - min)) + min;
+        let num2 = (Math.floor(num2Base / 10) * 10) + minOnes2 + Math.floor(Math.random() * (9 - minOnes2 + 1));
+
+        return {
+            id: generateId(),
+            type: 'addition',
+            num1,
+            num2,
+            operation: '+',
+            answer: num1 + num2
+        };
+    }
+
+    if (errorType === 'BORROWING_ERROR' && originalProblem.operation === '-') {
+        // Force a borrowing problem
+        // e.g. 23 - 7. 3 < 7.
+        const num1 = Math.floor(Math.random() * (max - min)) + min;
+        const ones1 = num1 % 10;
+
+        // ensure ones2 > ones1
+        const num2Base = Math.floor(Math.random() * (num1 * 0.5)); // subtract smaller number
+        let num2 = (Math.floor(num2Base / 10) * 10) + ones1 + 1 + Math.floor(Math.random() * (9 - ones1 - 1));
+        if (num2 > num1) num2 = num1 - 1; // safety
+
+        return {
+            id: generateId(),
+            type: 'subtraction',
+            num1,
+            num2,
+            operation: '-',
+            answer: num1 - num2
+        };
+    }
+
+    // Default: Regenerate with same parameters
+    // We can infer level from number magnitude roughly
+    const level = Math.ceil(Math.log10(max));
+    return generateProblem(originalProblem.type, level, { min, max });
 };

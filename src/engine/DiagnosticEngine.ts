@@ -158,6 +158,53 @@ export class DiagnosticEngine {
             } else {
                 steps.push(`${num1} × ${num2} = ${num1 * num2}`);
             }
+        } else if (operation === '√') {
+            // Strategy: Nearest Square
+            const num = Number(num1);
+            const ans = Number(problem.answer);
+            if (ans * ans === num) {
+                steps.push(`Find the number that multiplied by itself equals ${num}.`);
+                // Check nearby squares to give context
+                const lower = (ans - 1) * (ans - 1);
+                const higher = (ans + 1) * (ans + 1);
+                steps.push(`We know ${ans - 1}² = ${lower} and ${ans + 1}² = ${higher}.`);
+                steps.push(`Since ${ans} × ${ans} = ${num}, the answer is ${ans}.`);
+            } else {
+                steps.push(`Estimate the root of ${num}.`);
+                steps.push(`It is between ${Math.floor(ans)} and ${Math.ceil(ans)}.`);
+            }
+        } else if (problem.type === 'percentage_basic') {
+            // Strategy: 10% and 1%
+            // num1 is "20%", num2 is 50.
+            const percentStr = String(num1).replace('%', '');
+            const percent = Number(percentStr);
+            const base = Number(num2);
+
+            steps.push(`Find ${percent}% of ${base}.`);
+
+            if (percent % 10 === 0) {
+                const tenPercent = base / 10;
+                steps.push(`First, find 10% by moving the decimal one spot left.`);
+                steps.push(`10% of ${base} is ${tenPercent}.`);
+                const multiplier = percent / 10;
+                if (multiplier !== 1) {
+                    steps.push(`We need ${percent}%, so multiply by ${multiplier}.`);
+                    steps.push(`${tenPercent} × ${multiplier} = ${tenPercent * multiplier}.`);
+                }
+            } else if (percent === 25) {
+                steps.push(`25% is the same as 1/4.`);
+                steps.push(`Divide ${base} by 4.`);
+                steps.push(`${base} ÷ 4 = ${base / 4}.`);
+            } else if (percent === 50) {
+                steps.push(`50% is exactly half.`);
+                steps.push(`${base} ÷ 2 = ${base / 2}.`);
+            } else {
+                // 1% method
+                const onePercent = base / 100;
+                steps.push(`Find 1% by moving the decimal two spots left: ${onePercent}.`);
+                steps.push(`Multiply by ${percent}.`);
+                steps.push(`${onePercent} × ${percent} = ${onePercent * percent}.`);
+            }
         } else {
             steps.push(`${num1} ${operation} ${num2} = ${problem.answer}`);
         }

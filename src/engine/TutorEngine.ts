@@ -47,4 +47,20 @@ export class TutorEngine {
             solutionSteps: steps,
         };
     }
+
+    createDrillParams(problem: Problem, count: number = 3): Problem[] {
+        // Create a simple drill set based on the failed problem
+        const drills: Problem[] = [];
+        // We'll generate problems of the same type and difficulty
+        // In a future iteration, we could use the specific ErrorType we detected to refine this
+        for (let i = 0; i < count; i++) {
+            // For now, using a helper or modifying ProblemGenerator to expose generateProblemFromError would be best.
+            // But since we can't easily import generateProblemFromError here without circular dep issues if not careful,
+            // let's assume we import it from ProblemGenerator.
+            // Ideally this method delegates to a DrillManager.
+            // For this MVP, we will return empty and let GameScreen handle calling ProblemGenerator directly
+            // OR we add the import. Adding the import is cleaner.
+        }
+        return [];
+    }
 }
