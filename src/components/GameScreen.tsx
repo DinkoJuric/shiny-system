@@ -35,6 +35,7 @@ const GameScreen = () => {
     const [tutorState, setTutorState] = useState<TutorState>({ shouldShowBreakdown: false, solutionSteps: [] });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [drillQueue, setDrillQueue] = useState<any[]>([]); // Queue for drill problems
+    const [showDrillComplete, setShowDrillComplete] = useState(false);
 
     // Initial Load
     useEffect(() => {
@@ -44,10 +45,10 @@ const GameScreen = () => {
     // Session Limit Check (e.g., 10 questions)
     const questionsAnswered = engine.getSessionSummary().totalProblems;
     useEffect(() => {
-        if (questionsAnswered > 0 && questionsAnswered % 10 === 0 && !feedback) {
+        if (questionsAnswered > 0 && questionsAnswered % 10 === 0 && !feedback && drillQueue.length === 0) {
             setShowSummary(true);
         }
-    }, [questionsAnswered, feedback]);
+    }, [questionsAnswered, feedback, drillQueue.length]);
 
     const loadNextProblem = () => {
         let problem;
@@ -56,6 +57,12 @@ const GameScreen = () => {
             const [nextDrill, ...remaining] = drillQueue;
             problem = nextDrill;
             setDrillQueue(remaining);
+
+            // If this was the last drill, queue up the "Drill Complete" feedback
+            if (remaining.length === 0) {
+                setShowDrillComplete(true);
+                setTimeout(() => setShowDrillComplete(false), 3000); // Auto-hide after 3s
+            }
         } else {
             problem = engine.getNextProblem();
             if (problem) {
@@ -161,6 +168,13 @@ const GameScreen = () => {
             {xpGained > 0 && (
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full text-4xl font-bold text-yellow-400 animate-bounce z-50 pointer-events-none drop-shadow-lg">
                     +{xpGained} XP
+                </div>
+            )}
+
+            {/* Drill Complete Feedback */}
+            {showDrillComplete && (
+                <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-emerald-500/90 text-white px-6 py-2 rounded-full font-bold shadow-lg animate-in fade-in slide-in-from-top-4 z-50 flex items-center gap-2">
+                    <span>✨ Drill Complete! Back to Training</span>
                 </div>
             )}
 
@@ -270,18 +284,45 @@ const GameScreen = () => {
                                         Answer: {feedback.correctAnswer}{' '}
                                         <span className="text-xs opacity-50">(Press Enter)</span>
                                     </span>
-                                    {/* Manual Trigger for Tutor */}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const breakdown = tutorEngine.getBreakdown(currentProblem);
-                                            setTutorState(breakdown);
-                                            setIsModalOpen(true);
-                                        }}
-                                        className="mt-3 text-sm text-indigo-400 hover:text-indigo-300 underline underline-offset-4 font-medium transition-colors"
-                                    >
-                                        Wait, explain why?
-                                    </button>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex items-center justify-center gap-4 mt-4">
+                                        {/* Explain Button */}
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const breakdown = tutorEngine.getBreakdown(currentProblem);
+                                                setTutorState(breakdown);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="text-sm text-indigo-400 hover:text-indigo-300 underline underline-offset-4 font-medium transition-colors"
+                                        >
+                                            Explain why?
+                                        </button>
+
+                                        {/* Practice This Button */}
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const drills = tutorEngine.createDrillParams(currentProblem);
+                                                if (drills.length > 0) {
+                                                    const [first, ...rest] = drills;
+                                                    setDrillQueue(rest);
+                                                    setCurrentProblem(first);
+                                                    setUserAnswer('');
+                                                    setFeedback(null);
+                                                    setShowHint(false);
+                                                    setTutorState({ shouldShowBreakdown: false, solutionSteps: [] });
+                                                    setIsModalOpen(false);
+                                                    setStartTime(Date.now());
+                                                    setTimeout(() => inputRef.current?.focus(), 50);
+                                                }
+                                            }}
+                                            className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-sm font-medium rounded-lg border border-emerald-500/20 transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            Practice This
+                                        </button>
+                                    </div>
                                 </>
                             )}
                         </div>
