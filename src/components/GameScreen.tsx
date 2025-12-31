@@ -36,6 +36,7 @@ const GameScreen = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [drillQueue, setDrillQueue] = useState<any[]>([]); // Queue for drill problems
     const [showDrillComplete, setShowDrillComplete] = useState(false);
+    const [drillStats, setDrillStats] = useState({ correct: 0, total: 0 });
 
     // Initial Load
     useEffect(() => {
@@ -92,6 +93,13 @@ const GameScreen = () => {
             streak: result.streak,
             score: prev.score + (result.isCorrect ? 10 : 0) // Simple score
         }));
+
+        // Drill Stats Tracking
+        if (drillQueue.length > 0 || (currentProblem.id && currentProblem.id.startsWith('drill'))) {
+            if (result.isCorrect) {
+                setDrillStats(prev => ({ ...prev, correct: prev.correct + 1 }));
+            }
+        }
 
         // Tutor Orchestrator Check
         const newTutorState = tutorEngine.handleAttempt(currentProblem, result.isCorrect);
@@ -173,8 +181,21 @@ const GameScreen = () => {
 
             {/* Drill Complete Feedback */}
             {showDrillComplete && (
-                <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-emerald-500/90 text-white px-6 py-2 rounded-full font-bold shadow-lg animate-in fade-in slide-in-from-top-4 z-50 flex items-center gap-2">
-                    <span>✨ Drill Complete! Back to Training</span>
+                <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-xl border border-emerald-500/30 text-white px-8 py-6 rounded-2xl shadow-2xl animate-in fade-in slide-in-from-top-4 z-50 text-center min-w-[300px]">
+                    <div className="text-emerald-400 font-bold text-lg mb-2 uppercase tracking-wide">Drill Report</div>
+
+                    <div className="flex justify-center items-end gap-2 mb-4">
+                        <span className="text-4xl font-bold text-white">{drillStats.correct}</span>
+                        <span className="text-xl text-slate-400 font-medium mb-1">/ {drillStats.total}</span>
+                    </div>
+
+                    <div className="text-slate-300 font-medium bg-white/5 py-2 px-4 rounded-lg">
+                        {drillStats.total > 0 && (drillStats.correct / drillStats.total) === 1 && "Perfect Score! 🌟"}
+                        {drillStats.total > 0 && (drillStats.correct / drillStats.total) >= 0.8 && (drillStats.correct / drillStats.total) < 1 && "Great Accuracy! 🔥"}
+                        {drillStats.total > 0 && (drillStats.correct / drillStats.total) >= 0.5 && (drillStats.correct / drillStats.total) < 0.8 && "Good Practice! 👍"}
+                        {drillStats.total > 0 && (drillStats.correct / drillStats.total) < 0.5 && "Keep Training! 💪"}
+                        {drillStats.total === 0 && "Drill Complete"}
+                    </div>
                 </div>
             )}
 
@@ -308,6 +329,7 @@ const GameScreen = () => {
                                                 if (drills.length > 0) {
                                                     const [first, ...rest] = drills;
                                                     setDrillQueue(rest);
+                                                    setDrillStats({ correct: 0, total: drills.length });
                                                     setCurrentProblem(first);
                                                     setUserAnswer('');
                                                     setFeedback(null);
